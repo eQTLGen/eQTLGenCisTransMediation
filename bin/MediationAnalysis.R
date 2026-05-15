@@ -175,10 +175,13 @@ SobelTest <- function(trans_gene, cis_gene, variant, covariates, data){
 
     prop_mediated <- (trans_beta - trans_beta_adjusted) / trans_beta
 
+    R_cis_trans <- cor(data[[cis_gene]], data[[trans_gene]])
+
     results <- data.table(
         variant = variant, 
         cis_gene = cis_gene, 
-        trans_gene = trans_gene, 
+        trans_gene = trans_gene,
+        cor_cis_trans = R_cis_trans,
         n = nrow(data),
         cis_beta = cis_beta,
         cis_se = cis_se,
@@ -205,15 +208,12 @@ return(results)
 # Analysis #
 ############
 
-############
-# Analysis #
-############
-
 # Results template
 SobelResults <- data.table(
   variant = NA, 
   cis_gene = NA, 
   trans_gene = NA, 
+  cor_cis_trans = NA,
   n = NA, 
   cis_beta = NA, 
   cis_se = NA, 

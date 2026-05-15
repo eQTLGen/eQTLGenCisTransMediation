@@ -1,17 +1,27 @@
 #!/usr/bin/env Rscript
 
 library(data.table)
-library(argparse)
-library(tidyverse)
+library(optparse)
+library(dplyr)
 
 # -----------------------------
 # DEFINE ARGUMENTS
 # -----------------------------
-parser <- ArgumentParser(description = "Prepare files with variant - cis-eGene - trans-eGene triplets to analyse.")
+option_list <- list(
+  make_option(
+    c("--finemapped"),
+    type = "character",
+    help = "eQTLGen file with fine-mapped cis- and trans-eQTLs.",
+    metavar = "FILE"
+  )
+)
 
-parser$add_argument("--finemapped", required = TRUE, help = "eQTLGen file with fine-mapped cis- and trans-eQTLs.")
+parser <- OptionParser(
+  option_list = option_list,
+  description = "Prepare files with variant - cis-eGene - trans-eGene triplets to analyse."
+)
 
-args <- parser$parse_args()
+args <- parse_args(parser)
 
 # Functions
 library(data.table)
@@ -114,11 +124,8 @@ res <- foverlaps(trans, cis, type = "any", nomatch = 0L)
 
 res <- res[, c(1, 5, 6, 2), with = FALSE]
 
-abi2 <- res %>% group_by(variant) %>% 
-summarise(n = n(), 
-nr_trans = length(unique(trans_gene)),
-nr_cis = length(unique(cis_gene))) %>% 
-arrange(desc(n))
+# Remove edge cases where cis and trans are for same gene in same (large) locus
+res <- res[cis_gene != trans_gene]
 
 setorder(res, chromosome)
 
