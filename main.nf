@@ -102,9 +102,7 @@ workflow {
         tuple(chr, file)
         }
 
-        genotype_ch.view()
-
-        triplets_ch = triplets_ch.join(genotype_ch)
+        triplets_ch = triplets_ch.combine(genotype_ch, by: 0)
 
         combined_ch = triplets_ch
             .combine(covariate_ch)
