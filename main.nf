@@ -43,8 +43,8 @@ if (params.help){
 }
 
 // Default parameters
-params.OutputDir = 'results'
-params.covariates = 'GenPC1,GenPC2,GenPC3,GenPC4,ExpPC1,ExpPC2,ExpPC3,ExpPC4,ExpPC5,ExpPC6,ExpPC7,ExpPC8,ExpPC9,ExpPC10,ExpPC11,ExpPC12,ExpPC13,ExpPC14,ExpPC15,ExpPC16,ExpPC17,ExpPC18,ExpPC19,ExpPC20'
+// params.covariates = 'GenPC1,GenPC2,GenPC3,GenPC4,ExpPC1,ExpPC2,ExpPC3,ExpPC4,ExpPC5,ExpPC6,ExpPC7,ExpPC8,ExpPC9,ExpPC10,ExpPC11,ExpPC12,ExpPC13,ExpPC14,ExpPC15,ExpPC16,ExpPC17,ExpPC18,ExpPC19,ExpPC20'
+params.expression_matrix = ''
 
 //Show parameter values
 log.info """================================================================
@@ -104,7 +104,7 @@ workflow {
 
         genotype_ch.view()
 
-        triplets_ch = triplets_ch.join(genotype_ch)
+        triplets_ch = triplets_ch.combine(genotype_ch, by: 0)
 
         combined_ch = triplets_ch
             .combine(covariate_ch)

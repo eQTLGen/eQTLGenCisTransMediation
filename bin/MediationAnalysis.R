@@ -72,7 +72,14 @@ ParseGenotypes <- function(vcf, variants) {
     " | bcftools query -f \"%CHROM\\t%POS\\t%ID[\\t%DS]\\n\""
   )
 
+  print(cmd)
+
   dt <- fread(cmd = cmd, header = FALSE)
+
+  if (is.null(dt) || ncol(dt) == 0 ) {
+    message("Empty data table!")
+    return(list(chr = NA, pos = NA, ID = NA, geno = data.table(sample=c(NA))[-1,]))
+  }
 
   # 3. assign names
   setnames(

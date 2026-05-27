@@ -111,14 +111,17 @@ cis   <- dt[type == "cis"]
 trans <- dt[type == "trans"]
 
 # cis gene positions
-cis <- unique(cis[, c(5, 7, 8, 9), with = FALSE])
-trans <- unique(trans[, c(12, 5, 2, 3, 4), with = FALSE])
+cis <- unique(cis[, c("phenotype", "seqid", "start", "end"), with = FALSE])
+trans <- unique(trans[, c("variant", "phenotype", "chromosome", "locus_start", "locus_end"), with = FALSE])
 
 colnames(cis) <- c("cis_gene", "chromosome", "start", "end")
 colnames(trans) <- c("variant", "trans_gene", "chromosome", "start", "end")
 
 setkey(cis, chromosome, start, end)
 setkey(trans, chromosome, start, end)
+
+print(trans)
+print(cis)
 
 res <- foverlaps(trans, cis, type = "any", nomatch = 0L)
 
