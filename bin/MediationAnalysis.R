@@ -165,9 +165,15 @@ SobelTest <- function(trans_gene, cis_gene, variant, covariates, data){
     mediated_se <- coef(summary(mediated_model))[cis_gene, "Std. Error"]
 
     # Calcuate Sobel's T-statistic
-    sobel_t <- (cis_beta * mediated_beta) / sqrt(cis_beta^2 * mediated_se^2 + mediated_beta^2 * cis_se^2)
-    sobel_aroian_t <- (cis_beta * mediated_beta) / sqrt(cis_beta^2 * mediated_se^2 + mediated_beta^2 * cis_se^2 + cis_se^2 * mediated_se^2)
-    sobel_goodman_t <- (cis_beta * mediated_beta) / sqrt(cis_beta^2 * mediated_se^2 + mediated_beta^2 * cis_se^2 - cis_se^2 * mediated_se^2)
+
+    sobel_effect <- cis_beta * mediated_beta
+    sobel_se <- sqrt(cis_beta^2 * mediated_se^2 + mediated_beta^2 * cis_se^2)
+    sobel_aroian_se <- sqrt(cis_beta^2 * mediated_se^2 + mediated_beta^2 * cis_se^2 + cis_se^2 * mediated_se^2)
+    sobel_goodman_se <- sqrt(cis_beta^2 * mediated_se^2 + mediated_beta^2 * cis_se^2 - cis_se^2 * mediated_se^2)
+
+    sobel_t <- sobel_effect / sobel_se
+    sobel_aroian_t <- sobel_effect / sobel_aroian_se
+    sobel_goodman_t <- sobel_effect / sobel_goodman_se
 
     # Calculate Sobel's P-values
     if(!is.na(sobel_t)){sobel_p <- ZtoP(sobel_t)} else {sobel_p <- NA}
@@ -197,6 +203,10 @@ SobelTest <- function(trans_gene, cis_gene, variant, covariates, data){
         trans_beta_adjusted = trans_beta_adjusted,
         trans_se_adjusted = trans_se_adjusted,
         prop_mediated = prop_mediated,
+        sobel_beta = sobel_effect,
+        sobel_se = sobel_se,
+        sobel_aroian_se = sobel_aroian_se,
+        sobel_goodman_se = sobel_goodman_se,
         sobel_t = sobel_t,
         sobel_p = sobel_p,
         sobel_aroian_t = sobel_aroian_t,
@@ -228,7 +238,11 @@ SobelResults <- data.table(
   trans_se = NA, 
   trans_beta_adjusted = NA, 
   trans_se_adjusted = NA, 
-  prop_mediated = NA, 
+  prop_mediated = NA,
+  sobel_beta = NA,
+  sobel_se = NA,
+  sobel_aroian_se = NA,
+  sobel_goodman_se = NA,
   sobel_t = NA, 
   sobel_p = NA, 
   sobel_aroian_t = NA, 
